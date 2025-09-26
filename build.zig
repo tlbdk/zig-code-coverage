@@ -63,6 +63,7 @@ pub fn build(b: *std.Build) void {
     const exe = b.addExecutable(.{
         .name = "zig_code_coverage",
         .root_module = exe_mod,
+        .use_llvm = true,
     });
 
     // This declares intent for the executable to be installed into the
@@ -97,6 +98,7 @@ pub fn build(b: *std.Build) void {
     // but does not run it.
     const lib_unit_tests = b.addTest(.{
         .root_module = lib_mod,
+        .use_llvm = true,
     });
 
     const run_lib_unit_tests = b.addRunArtifact(lib_unit_tests);
