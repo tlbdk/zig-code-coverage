@@ -2,8 +2,6 @@
 
 FROM ubuntu:24.04
 
-RUN cat /etc/apt/sources.list.d/ubuntu.sources
-
 ARG TARGETOS
 ARG TARGETARCH
 
