@@ -48,25 +48,26 @@ jobs:
             echo "Unsupported target os and platform $RUNNER_OS/$RUNNER_ARCH";
             exit 1;
           fi;
-            echo "Types: deb" > /etc/apt/sources.list.d/plucky.sources &&
-            echo "URIs: ${PLUCKY_URL}" >> /etc/apt/sources.list.d/plucky.sources &&
-            echo "Suites: plucky plucky-updates plucky-backports" >> /etc/apt/sources.list.d/plucky.sources &&
-            echo "Components: main restricted universe multiverse" >> /etc/apt/sources.list.d/plucky.sources &&
-            echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" >> /etc/apt/sources.list.d/plucky.sources &&
-            echo "" >> /etc/apt/sources.list.d/plucky.sources &&
-            echo "Types: deb" >> /etc/apt/sources.list.d/plucky.sources &&
-            echo "URIs: ${PLUCKY_SECURITY_URL}" >> /etc/apt/sources.list.d/plucky.sources &&
-            echo "Suites: plucky-security" >> /etc/apt/sources.list.d/plucky.sources &&
-            echo "Components: main restricted universe multiverse" >> /etc/apt/sources.list.d/plucky.sources &&
-            echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" >> /etc/apt/sources.list.d/plucky.sources &&
-            echo "Package: *" > /etc/apt/preferences.d/plucky-pin &&
-            echo &&
-            echo "Pin: release n=plucky" >> /etc/apt/preferences.d/plucky-pin &&
-            echo "Pin-Priority: -10" >> /etc/apt/preferences.d/plucky-pin &&
-            echo "" >> /etc/apt/preferences.d/plucky-pin &&
-            echo "Package: kcov" >> /etc/apt/preferences.d/plucky-pin &&
-            echo "Pin: release n=plucky" >> /etc/apt/preferences.d/plucky-pin &&
-            echo "Pin-Priority: 500" >> /etc/apt/preferences.d/plucky-pin
+            sudo mkdir -p /etc/apt/sources.list.d
+            sudo echo "Types: deb" > /etc/apt/sources.list.d/plucky.sources &&
+            sudo echo "URIs: ${PLUCKY_URL}" >> /etc/apt/sources.list.d/plucky.sources &&
+            sudo echo "Suites: plucky plucky-updates plucky-backports" >> /etc/apt/sources.list.d/plucky.sources &&
+            sudo echo "Components: main restricted universe multiverse" >> /etc/apt/sources.list.d/plucky.sources &&
+            sudo echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" >> /etc/apt/sources.list.d/plucky.sources &&
+            sudo echo "" >> /etc/apt/sources.list.d/plucky.sources &&
+            sudo echo "Types: deb" >> /etc/apt/sources.list.d/plucky.sources &&
+            sudo echo "URIs: ${PLUCKY_SECURITY_URL}" >> /etc/apt/sources.list.d/plucky.sources &&
+            sudo echo "Suites: plucky-security" >> /etc/apt/sources.list.d/plucky.sources &&
+            sudo echo "Components: main restricted universe multiverse" >> /etc/apt/sources.list.d/plucky.sources &&
+            sudo echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" >> /etc/apt/sources.list.d/plucky.sources &&
+            sudo echo "Package: *" > /etc/apt/preferences.d/plucky-pin &&
+            sudo echo &&
+            sudo echo "Pin: release n=plucky" >> /etc/apt/preferences.d/plucky-pin &&
+            sudo echo "Pin-Priority: -10" >> /etc/apt/preferences.d/plucky-pin &&
+            sudo echo "" >> /etc/apt/preferences.d/plucky-pin &&
+            sudo echo "Package: kcov" >> /etc/apt/preferences.d/plucky-pin &&
+            sudo echo "Pin: release n=plucky" >> /etc/apt/preferences.d/plucky-pin &&
+            sudo echo "Pin-Priority: 500" >> /etc/apt/preferences.d/plucky-pin
 
       - name: Setup kcov  
         run: |
