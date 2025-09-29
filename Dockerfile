@@ -82,6 +82,7 @@ RUN zig version
 ADD . /app
 WORKDIR /app
 
+RUN --security=insecure zig build && kcov --dump-summary  --include-pattern=src/  coverage/ zig-out/bin/test
 RUN --security=insecure zig build coverage
 
 RUN cat zig-out/coverage/cov.xml |grep line-rate
