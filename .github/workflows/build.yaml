@@ -36,7 +36,4 @@ jobs:
         run: zig build coverage --summary all
 
       - name: Test c-code-coverage
-        run: |
-          git clone https://github.com/tlbdk/c-code-coverage.git
-          cd c-code-coverage
-          make kcov
+        run: git clone https://github.com/tlbdk/c-code-coverage.git && (cd c-code-coverage && make kcov)
