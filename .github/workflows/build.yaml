@@ -31,7 +31,7 @@ jobs:
           fi;
           curl -sSL --fail -o ${RUNNER_TEMP}/zig.tar.xz "$ZIG_URL" && 
           mkdir -p ${RUNNER_TEMP}/zig && 
-          tar -xf ${RUNNER_TEMP}zig.tar.xz -C ${RUNNER_TEMP}/zig --strip-components=1
+          tar -xf ${RUNNER_TEMP}/zig.tar.xz -C ${RUNNER_TEMP}/zig --strip-components=1
           echo "${RUNNER_TEMP}/zig" >> $GITHUB_PATH
 
       - name: Add Ubuntu 25.04 mirrors and pin kcov
