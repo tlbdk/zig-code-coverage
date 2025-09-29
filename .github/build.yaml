@@ -1,0 +1,42 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Zig
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.14.1
+
+      - name: Setup kcov  
+        run: |
+          wget https://github.com/SimonKagstrom/kcov/releases/download/v42/kcov-amd64.tar.gz
+          sudo tar xf kcov-amd64.tar.gz -C /
+
+      - name: Check Formatting
+        run: zig fmt --ast-check --check src
+
+      - name: Run Tests
+        run: zig build test --summary all
+
+      - name: Collect Coverage
+        run: zig build coverage --summary all
+
+      - name: Test c-code-coverage
+        run: |
+          git clone https://github.com/tlbdk/c-code-coverage.git
+          cd c-code-coverage
+          make kcov
