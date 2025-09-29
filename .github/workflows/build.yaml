@@ -19,52 +19,53 @@ jobs:
       - name: Install Zig
         run: |
           ZIG_VERSION="0.15.1"
-          if [ "$RUNNER_OS-$RUNNER_ARCH" == "Linux-X64" ]; then \
-            echo Downloading amd64 binaries; \
-            ZIG_URL="https://ziglang.org/download/${ZIG_VERSION}/zig-x86_64-linux-${ZIG_VERSION}.tar.xz"; \
-          elif [ "$RUNNER_OS-$RUNNER_ARCH" == "Linux-ARM64" ]; then \
-            echo Downloading arm64 binaries; \
-                ZIG_URL="https://ziglang.org/download/${ZIG_VERSION}/zig-aarch64-linux-${ZIG_VERSION}.tar.xz"; \
-          else \
-            echo "Unsupported target os and platform $RUNNER_OS/$RUNNER_ARCH"; \
-            exit 1; \
-          fi; \
-            curl -sSL --fail -o zig.tar.xz "$ZIG_URL" && \
-            mkdir -p /usr/local/zig && \
-            tar -xf zig.tar.xz -C /usr/local/zig --strip-components=1
+          if [ "$RUNNER_OS-$RUNNER_ARCH" == "Linux-X64" ]; then 
+            echo Downloading amd64 binaries; 
+            ZIG_URL="https://ziglang.org/download/${ZIG_VERSION}/zig-x86_64-linux-${ZIG_VERSION}.tar.xz"; 
+          elif [ "$RUNNER_OS-$RUNNER_ARCH" == "Linux-ARM64" ]; then 
+            echo Downloading arm64 binaries; 
+                ZIG_URL="https://ziglang.org/download/${ZIG_VERSION}/zig-aarch64-linux-${ZIG_VERSION}.tar.xz"; 
+          else 
+            echo "Unsupported target os and platform $RUNNER_OS/$RUNNER_ARCH"; 
+            exit 1; 
+          fi;
+          curl -sSL --fail -o ${RUNNER_TEMP}/zig.tar.xz "$ZIG_URL" && 
+          mkdir -p ${RUNNER_TEMP}/zig && 
+          tar -xf zig.tar.xz -C ${RUNNER_TEMP}/zig --strip-components=1
+          echo "${RUNNER_TEMP}/zig" >> $GITHUB_PATH
 
-      - name: Add Plucky mirrors and pin kcov
+      - name: Add Ubuntu 25.04 mirrors and pin kcov
         run: |
-          if [ "$RUNNER_OS-$RUNNER_ARCH" == "Linux-X64" ]; then \
-            echo Downloading amd64 binaries; \
-            PLUCKY_URL="http://archive.ubuntu.com/ubuntu/"; \
-            PLUCKY_SECURITY_URL="http://security.ubuntu.com/ubuntu/"; \
-          elif [ "$RUNNER_OS-$RUNNER_ARCH" == "Linux-ARM64" ]; then \
-            echo Downloading arm64 binaries; \
-                PLUCKY_URL="http://ports.ubuntu.com/ubuntu-ports/"; \
-                PLUCKY_SECURITY_URL="http://ports.ubuntu.com/ubuntu-ports/"; \
-          else \
-            echo "Unsupported target os and platform $RUNNER_OS/$RUNNER_ARCH"; \
-            exit 1; \
-          fi; \
-            echo "Types: deb" > /etc/apt/sources.list.d/plucky.sources && \
-            echo "URIs: ${PLUCKY_URL}" >> /etc/apt/sources.list.d/plucky.sources && \
-            echo "Suites: plucky plucky-updates plucky-backports" >> /etc/apt/sources.list.d/plucky.sources && \
-            echo "Components: main restricted universe multiverse" >> /etc/apt/sources.list.d/plucky.sources && \
-            echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" >> /etc/apt/sources.list.d/plucky.sources && \
-            echo "" >> /etc/apt/sources.list.d/plucky.sources && \
-            echo "Types: deb" >> /etc/apt/sources.list.d/plucky.sources && \
-            echo "URIs: ${PLUCKY_SECURITY_URL}" >> /etc/apt/sources.list.d/plucky.sources && \
-            echo "Suites: plucky-security" >> /etc/apt/sources.list.d/plucky.sources && \
-            echo "Components: main restricted universe multiverse" >> /etc/apt/sources.list.d/plucky.sources && \
-            echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" >> /etc/apt/sources.list.d/plucky.sources && \
-            echo "Package: *" > /etc/apt/preferences.d/plucky-pin && \
-            echo && \
-            echo "Pin: release n=plucky" >> /etc/apt/preferences.d/plucky-pin && \
-            echo "Pin-Priority: -10" >> /etc/apt/preferences.d/plucky-pin && \
-            echo "" >> /etc/apt/preferences.d/plucky-pin && \
-            echo "Package: kcov" >> /etc/apt/preferences.d/plucky-pin && \
-            echo "Pin: release n=plucky" >> /etc/apt/preferences.d/plucky-pin && \
+          if [ "$RUNNER_OS-$RUNNER_ARCH" == "Linux-X64" ]; then
+            echo Downloading amd64 binaries;
+            PLUCKY_URL="http://archive.ubuntu.com/ubuntu/";
+            PLUCKY_SECURITY_URL="http://security.ubuntu.com/ubuntu/";
+          elif [ "$RUNNER_OS-$RUNNER_ARCH" == "Linux-ARM64" ]; then
+            echo Downloading arm64 binaries;
+                PLUCKY_URL="http://ports.ubuntu.com/ubuntu-ports/";
+                PLUCKY_SECURITY_URL="http://ports.ubuntu.com/ubuntu-ports/";
+          else
+            echo "Unsupported target os and platform $RUNNER_OS/$RUNNER_ARCH";
+            exit 1;
+          fi;
+            echo "Types: deb" > /etc/apt/sources.list.d/plucky.sources &&
+            echo "URIs: ${PLUCKY_URL}" >> /etc/apt/sources.list.d/plucky.sources &&
+            echo "Suites: plucky plucky-updates plucky-backports" >> /etc/apt/sources.list.d/plucky.sources &&
+            echo "Components: main restricted universe multiverse" >> /etc/apt/sources.list.d/plucky.sources &&
+            echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" >> /etc/apt/sources.list.d/plucky.sources &&
+            echo "" >> /etc/apt/sources.list.d/plucky.sources &&
+            echo "Types: deb" >> /etc/apt/sources.list.d/plucky.sources &&
+            echo "URIs: ${PLUCKY_SECURITY_URL}" >> /etc/apt/sources.list.d/plucky.sources &&
+            echo "Suites: plucky-security" >> /etc/apt/sources.list.d/plucky.sources &&
+            echo "Components: main restricted universe multiverse" >> /etc/apt/sources.list.d/plucky.sources &&
+            echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" >> /etc/apt/sources.list.d/plucky.sources &&
+            echo "Package: *" > /etc/apt/preferences.d/plucky-pin &&
+            echo &&
+            echo "Pin: release n=plucky" >> /etc/apt/preferences.d/plucky-pin &&
+            echo "Pin-Priority: -10" >> /etc/apt/preferences.d/plucky-pin &&
+            echo "" >> /etc/apt/preferences.d/plucky-pin &&
+            echo "Package: kcov" >> /etc/apt/preferences.d/plucky-pin &&
+            echo "Pin: release n=plucky" >> /etc/apt/preferences.d/plucky-pin &&
             echo "Pin-Priority: 500" >> /etc/apt/preferences.d/plucky-pin
 
       - name: Setup kcov  
