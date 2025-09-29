@@ -48,7 +48,7 @@ RUN echo "Package: *" > /etc/apt/preferences.d/plucky-pin && \
 RUN cat /etc/apt/sources.list.d/plucky.sources
 RUN cat /etc/apt/preferences.d/plucky-pin
 
-RUN apt-get update && apt-get install --no-install-recommends -y curl xz-utils ca-certificates kcov minisign locales && rm -rf /var/lib/apt/lists/*
+RUN apt-get update -qq && apt-get install -qq --no-install-recommends -y curl xz-utils ca-certificates kcov minisign locales && rm -rf /var/lib/apt/lists/*
 
 # Set UTF8 locals
 RUN echo "LC_ALL=en_US.UTF-8" >> /etc/environment
@@ -89,7 +89,7 @@ RUN cat zig-out/coverage/cov.xml |grep line-rate
 
 # Clone c-code-coverage and test if that works
 
-RUN apt-get update && apt-get install --no-install-recommends -y build-essential git cmake && rm -rf /var/lib/apt/lists/*
+RUN apt-get update -qq && apt-get install -qq --no-install-recommends -y build-essential git cmake && rm -rf /var/lib/apt/lists/*
 
 RUN git clone https://github.com/tlbdk/c-code-coverage.git
 
