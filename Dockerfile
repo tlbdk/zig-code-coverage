@@ -7,6 +7,10 @@ RUN cat /etc/apt/sources.list.d/ubuntu.sources
 ARG TARGETOS
 ARG TARGETARCH
 
+ENV NO_COLOR=true
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+
+
 # Add plucky sources
 RUN if [ "$TARGETOS/${TARGETARCH}" = "linux/amd64" ]; then \
 		echo Downloading amd64 binaries; \
@@ -44,7 +48,16 @@ RUN echo "Package: *" > /etc/apt/preferences.d/plucky-pin && \
 RUN cat /etc/apt/sources.list.d/plucky.sources
 RUN cat /etc/apt/preferences.d/plucky-pin
 
-RUN apt-get update && apt-get install --no-install-recommends -y curl xz-utils ca-certificates kcov minisign && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install --no-install-recommends -y curl xz-utils ca-certificates kcov minisign locales && rm -rf /var/lib/apt/lists/*
+
+# Set UTF8 locals
+RUN echo "LC_ALL=en_US.UTF-8" >> /etc/environment
+RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+RUN echo "LANG=en_US.UTF-8" > /etc/locale.conf
+RUN locale-gen en_US.UTF-8
+ENV LANG='en_US.UTF-8'
+ENV LANGUAGE='en_US:en'
+ENV LC_ALL='en_US.UTF-8'
 
 ARG ZIG_VERSION=0.15.1
 
@@ -72,3 +85,15 @@ WORKDIR /app
 RUN --security=insecure zig build coverage
 
 RUN cat zig-out/coverage/cov.xml |grep line-rate
+
+# Clone c-code-coverage and test if that works
+
+RUN apt-get update && apt-get install --no-install-recommends -y build-essential git cmake && rm -rf /var/lib/apt/lists/*
+
+RUN git clone https://github.com/tlbdk/c-code-coverage.git
+
+WORKDIR /app/c-code-coverage/src
+
+RUN --security=insecure make kcov
+
+RUN find . |grep cov.xml

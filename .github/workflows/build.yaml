@@ -16,71 +16,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Zig
-        run: |
-          ZIG_VERSION="0.15.1"
-          if [ "$RUNNER_OS-$RUNNER_ARCH" == "Linux-X64" ]; then 
-            echo Downloading amd64 binaries; 
-            ZIG_URL="https://ziglang.org/download/${ZIG_VERSION}/zig-x86_64-linux-${ZIG_VERSION}.tar.xz"; 
-          elif [ "$RUNNER_OS-$RUNNER_ARCH" == "Linux-ARM64" ]; then 
-            echo Downloading arm64 binaries; 
-                ZIG_URL="https://ziglang.org/download/${ZIG_VERSION}/zig-aarch64-linux-${ZIG_VERSION}.tar.xz"; 
-          else 
-            echo "Unsupported target os and platform $RUNNER_OS/$RUNNER_ARCH"; 
-            exit 1; 
-          fi;
-          curl -sSL --fail -o ${RUNNER_TEMP}/zig.tar.xz "$ZIG_URL" && 
-          mkdir -p ${RUNNER_TEMP}/zig && 
-          tar -xf ${RUNNER_TEMP}/zig.tar.xz -C ${RUNNER_TEMP}/zig --strip-components=1
-          echo "${RUNNER_TEMP}/zig" >> $GITHUB_PATH
-
-      - name: Add Ubuntu 25.04 mirrors and pin kcov
-        run: |
-          if [ "$RUNNER_OS-$RUNNER_ARCH" == "Linux-X64" ]; then
-            echo Downloading amd64 binaries;
-            PLUCKY_URL="http://archive.ubuntu.com/ubuntu/";
-            PLUCKY_SECURITY_URL="http://security.ubuntu.com/ubuntu/";
-          elif [ "$RUNNER_OS-$RUNNER_ARCH" == "Linux-ARM64" ]; then
-            echo Downloading arm64 binaries;
-                PLUCKY_URL="http://ports.ubuntu.com/ubuntu-ports/";
-                PLUCKY_SECURITY_URL="http://ports.ubuntu.com/ubuntu-ports/";
-          else
-            echo "Unsupported target os and platform $RUNNER_OS/$RUNNER_ARCH";
-            exit 1;
-          fi;
-            sudo mkdir -p /etc/apt/sources.list.d
-            sudo echo "Types: deb" > /etc/apt/sources.list.d/plucky.sources &&
-            sudo echo "URIs: ${PLUCKY_URL}" >> /etc/apt/sources.list.d/plucky.sources &&
-            sudo echo "Suites: plucky plucky-updates plucky-backports" >> /etc/apt/sources.list.d/plucky.sources &&
-            sudo echo "Components: main restricted universe multiverse" >> /etc/apt/sources.list.d/plucky.sources &&
-            sudo echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" >> /etc/apt/sources.list.d/plucky.sources &&
-            sudo echo "" >> /etc/apt/sources.list.d/plucky.sources &&
-            sudo echo "Types: deb" >> /etc/apt/sources.list.d/plucky.sources &&
-            sudo echo "URIs: ${PLUCKY_SECURITY_URL}" >> /etc/apt/sources.list.d/plucky.sources &&
-            sudo echo "Suites: plucky-security" >> /etc/apt/sources.list.d/plucky.sources &&
-            sudo echo "Components: main restricted universe multiverse" >> /etc/apt/sources.list.d/plucky.sources &&
-            sudo echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" >> /etc/apt/sources.list.d/plucky.sources &&
-            sudo echo "Package: *" > /etc/apt/preferences.d/plucky-pin &&
-            sudo echo &&
-            sudo echo "Pin: release n=plucky" >> /etc/apt/preferences.d/plucky-pin &&
-            sudo echo "Pin-Priority: -10" >> /etc/apt/preferences.d/plucky-pin &&
-            sudo echo "" >> /etc/apt/preferences.d/plucky-pin &&
-            sudo echo "Package: kcov" >> /etc/apt/preferences.d/plucky-pin &&
-            sudo echo "Pin: release n=plucky" >> /etc/apt/preferences.d/plucky-pin &&
-            sudo echo "Pin-Priority: 500" >> /etc/apt/preferences.d/plucky-pin
-
-      - name: Setup kcov  
-        run: |
-          apt-get update && apt-get install --no-install-recommends -y kcov && rm -rf /var/lib/apt/lists/*
-
-      - name: Check Formatting
-        run: zig fmt --ast-check --check src
-
-      - name: Run Tests
-        run: zig build test --summary all
-
-      - name: Collect Coverage
-        run: zig build coverage --summary all
-
-      - name: Test c-code-coverage
-        run: git clone https://github.com/tlbdk/c-code-coverage.git && (cd c-code-coverage/src && make kcov)
+      - name: setup docker buildx
+        run: docker buildx create --name insecure-builder --buildkitd-flags "--allow-insecure-entitlement security.insecure"
+      
+      - name: Build container
+        run: docker buildx build --progress plain  --builder insecure-builder --allow security.insecure . 
