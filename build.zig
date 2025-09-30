@@ -51,7 +51,6 @@ pub fn build(b: *std.Build) void {
         .linkage = .static,
         .name = "zig_code_coverage",
         .root_module = lib_mod,
-        .use_llvm = true,
     });
 
     // This declares intent for the library to be installed into the standard
@@ -64,7 +63,6 @@ pub fn build(b: *std.Build) void {
     const exe = b.addExecutable(.{
         .name = "zig_code_coverage",
         .root_module = exe_mod,
-        .use_llvm = true,
     });
 
     // This declares intent for the executable to be installed into the
