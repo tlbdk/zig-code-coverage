@@ -1,0 +1,13 @@
+{
+    "lldb-dap.executable-path": "/Library/Developer/CommandLineTools/usr/bin/lldb-dap",
+    "zig.debugAdapter": "lldb-dap",
+    "[zig]": {
+        "editor.formatOnSave": true,
+    },
+    "zig.testArgs": [
+        "build",
+        "test",
+        "-Dtest-filter=${filter}"
+    ],
+    "zig.buildOnSaveProvider": "zls"
+}

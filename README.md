@@ -114,3 +114,28 @@ Build container:
 ``` bash
 docker buildx build  --progress plain  --builder insecure-builder --allow security.insecure .
 ```
+
+
+# VSCode setup
+
+settings.json:
+``` jsonc
+{
+    // MacOS
+    "lldb-dap.executable-path": "/Library/Developer/CommandLineTools/usr/bin/lldb-dap",
+    // Ubuntu 24.04
+    "lldb-dap.executable-path": "/usr/bin/lldb-dap-18",
+    // Windows 
+    "lldb-dap.executable-path": "C:/Program Files/LLVM/bin/lldb-dap.exe",
+    "zig.debugAdapter": "lldb-dap",
+    "[zig]": {
+        "editor.formatOnSave": true,
+    },
+    "zig.testArgs": [
+        "build",
+        "test",
+        "-Dtest-filter=${filter}"
+    ],
+    "zig.buildOnSaveProvider": "zls"
+}
+```
