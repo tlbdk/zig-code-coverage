@@ -136,6 +136,11 @@ settings.json:
         "test",
         "-Dtest-filter=${filter}"
     ],
+     "zig.debugTestArgs": [
+        "build",
+        "debug-test-unit",
+       "-Dtest-filter=${filter}",
+    ],
     "zig.buildOnSaveProvider": "zls"
 }
 ```
